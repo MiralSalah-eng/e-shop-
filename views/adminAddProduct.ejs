@@ -1,0 +1,39 @@
+<%- include('parts/header') %>
+<%- include('parts/navbar') %>
+
+<div class="container mt-5 d-flex">
+    <form action="/admin/add" method="POST" enctype="multipart/form-data" class="row g-3">
+        <h1 class="mb-5">Add Product Panel</h1>
+        <div class="col-auto">
+        <label for="title">Product title</label>
+        <input type="text" class="form-control" name="title"/>
+        </div>
+
+        <div class="col-auto">
+            <label for="price">Product price</label>
+            <input type="number" class="form-control" name="price"/>
+        </div>
+
+        <div class="col-auto">
+            <label for="category">Product category</label>
+            <select  name="category" class="form-select" aria-label="Default select example">
+                <option value="men">Men</option>
+                <option value="women">Women</option>
+                <option value="running">Running</option>
+              </select>
+        </div>
+        
+        <div class="my-3">
+            <label for="formFile" class="form-label">Pdoduct Image</label>
+            <input style="width: 65%;" class="form-control" type="file" name="image" />
+          </div>
+          
+          <input class="col-auto btn btn-light " type="submit" value="Add Product"/>
+        </form>
+          <div>
+            <img class="adminImage" style="width: 100%; " src="../admin.png">
+          </div>
+
+</div>
+
+<%- include('parts/footer') %>

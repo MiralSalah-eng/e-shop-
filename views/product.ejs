@@ -1,0 +1,84 @@
+<%- include('parts/header') %>
+<%- include('parts/navbar') %>
+
+<%if(!product) {%>
+<div class="alert alert-danger">
+  There Is No Matched Product With This ID
+</div>
+<%} else {%> 
+  
+<div  class="container mt-5 ">
+  <div class="d-flex flex-column flex-lg-row ">
+    <div class="col col-lg-4 col-12">
+        <img src="/<%=product.image%>" class="card-img-top" alt="...">
+    </div>
+
+    <div class="col col-lg-4 col-12 mt-2 mt-lg-4  ms-lg-5 ">
+      <div>
+        <p><a><%=product.category%></a> category</p>
+        <h2 class="card-title mb-4"><%=product.title%></h2>
+        <p class="card-text text-black-50">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+        <p class="card-text fw-bold" >Price : <%=product.price%> $</p>
+        <form class="mt-lg-5 mb-4 myForm" action="/cart" method="POST">
+
+
+          <input type="hidden" name="name" value="<%=product.title%>"/>
+          <input type="hidden" name="price" value="<%=product.price%>"/>
+          <input type="hidden" name="productId" value="<%=product._id%>"/>
+          <% if(user) {  %> 
+          <input type="hidden" name="userId" value="<%=user.id%>"/>
+          <% } %> 
+          <input type="hidden" name="redirectTo" value="/"/>
+          <input type="number" name="amount" class="form-control mb-2">
+          <p class="error" class="error"></p>
+          <input style="width: 100%;" type="submit" value="Add to Cart" class="btn btn-dark">
+        </form>
+      </div>
+    </div>
+</div>
+</div>
+
+
+<%}%> 
+
+<%- include('parts/footer') %>
+<script>
+  let errorContent = document.getElementsByClassName('error')
+
+  const forms = document.getElementsByClassName('myForm');
+
+for (const form of forms) {
+  form.addEventListener('submit',  async function(evt){
+    evt.preventDefault();
+    let index = Number( form.getAttribute("data-index"))
+    errorContent[index].textContent =" ";
+    
+    const name = form.name.value;
+    const price = form.price.value;
+    const amount = form.amount.value;
+    const userId = form.userId.value;
+    const productId = form.productId.value;
+    try {
+    const response = await fetch('/cart',{ 
+        method: 'POST', 
+        body: JSON.stringify({name,price,amount,userId,productId}),
+        headers: {'Content-Type': 'application/json'}
+      })
+      const data = await response.json();
+      if (data.errors) 
+      {
+        errorContent[index].textContent = data.errors.amount
+      }
+      if (!data.errors) 
+      {
+        
+        location.assign('/cart');
+      }
+    
+  } catch (error) {
+  }
+  
+
+})
+}
+</script>

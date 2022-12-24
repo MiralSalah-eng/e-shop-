@@ -1,0 +1,115 @@
+<%- include('parts/header') %>
+<%- include('parts/navbar') %>
+
+
+<div class="container mt-5">
+  <% if (items.length === 0) {%>
+  <p class="alert alert-danger">There is no Items In Cart</p>
+<% }else { %>  
+
+  <div class="table-responsive-sm">
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">no</th>
+      <th scope="col">Product</th>
+      <th scope="col">Price</th>
+      <th scope="col">Amount</th>
+      <th scope="col">Total</th>
+      <th scope="col">Date</th>
+      <th scope="col"></th>
+      <th scope="col"></th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% for ( let i=0; i < items.length ; i++) { %> 
+    <tr>
+      <th scope="row"><%= i+1 %></th>
+      <td>
+        <a style="text-decoration: none;" href="product/<%=items[i].productId%>"><%= items[i].name %></a>
+      </td>
+
+      <td><%= items[i].price %></td>
+      <p id="error" class="error text-center"></p>
+
+      <form class='myForm'>
+        <td><input type="text" name="amount" value="<%= items[i].amount %>" class="form-control"/></td>
+        <td><%=  items[i].price * items[i].amount %></td>
+        <% let date = new Date(items[i].timestamp) %> 
+        <td><%= date.getHours() + ":" + date.getMinutes() + ", "+ date.toDateString();%> </td>
+        <td class="d-flex justify-content-around">
+          <input type="hidden" name="cartId" value="<%=items[i]._id%>"/>
+        <input type="submit" value="Save" name="save"  class=" btn btn-light" formaction="/cart/save" >
+      </td>
+    </form>
+    <td>    
+      <form action="/address" method="POST">
+        <input type="hidden" name="userId" value="<%= items[i].userId %>"/>
+        <input type="hidden" name="productId" value="<%= items[i].productId %>"/>
+        <input type="hidden" name="name" value="<%= items[i].name %>"/>
+        <input type="hidden" name="price" value="<%= items[i].price %>"/>
+        <input type="hidden" name="amount" value="<%= items[i].amount %>"/>
+        <input type="hidden" name="email" value="<%=user.email%>"/>
+
+        <input type="submit" class=" btn btn-light" name="order" value="Order" >
+      </form>
+    </td>    
+    <td>
+      <form action="/cart/delete" method="POST">
+        <input type="hidden" name="cartId" value="<%=items[i]._id%>"/>
+        <input type="submit" class=" btn btn-danger" name="delete" value="Delete" >
+      </form>
+    </td>
+
+    <% } %> 
+  </tr>
+</tbody>
+</table>
+</div>
+<form method="POST">
+  <input type="submit" class=" btn btn-danger float-end" value="Delete All" formaction="/cart/deleteall">
+</form>
+
+<% } %> 
+
+</div>
+<%- include('parts/footer') %>
+
+<script>
+  let errorContent = document.getElementById('error');
+
+  const forms = document.getElementsByClassName('myForm');
+
+for (const form of forms) {
+  form.addEventListener('submit',  async function(evt){
+    evt.preventDefault();
+
+    errorContent.textContent =" ";
+    const cartId = form.cartId.value;
+    const amount = form.amount.value;
+
+    try {
+    const response = await fetch('/cart/save',{ 
+      method: 'POST', 
+      body: JSON.stringify({cartId,amount}),
+      headers: {'Content-Type': 'application/json'}
+    })
+      const data = await response.json();
+      if (data.errors) 
+      {
+        errorContent.textContent = data.errors.amount
+      }
+      if (!data.errors) {
+        location.assign('/cart');
+        
+    }
+  } catch (error) {
+    console.log(error);
+  }
+
+
+})
+}
+</script>

@@ -1,0 +1,61 @@
+<nav class="navbar navbar-expand-lg navbar-light shadow-sm p-3 bg-white rounded">
+    <div class="container">
+        
+            <a class="navbar-brand fw-bold"> E-Shop</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuItems" aria-controls="menuItems" aria-expanded="false" aria-label="Toggle Navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse flex-row justify-content-end" id="menuItems">
+            <ul class="navbar-nav mr-auto me-2">
+                <li class="nav-item ">
+              <a class="nav-link" aria-current="page" href="/">Home</a>
+              </li>
+
+              <li  class="nav-item">
+                  <a class="nav-link" href="/cart">Cart</a>
+              </li>
+              <li  class="nav-item">
+                  <a class="nav-link" href="/orders">Orders</a>
+              </li>
+
+              <% if (user) {%> 
+                <% if(user.isAdmin) {%>
+                    <li  class="nav-item  ">
+                        <a class="nav-link" href="/admin/add">Add Products</a>
+                    </li>
+                    <li  class="nav-item ">
+                        <a class="nav-link" href="/admin/orders">Manage Orders</a>
+                    </li>
+                    <% } %>  
+            <% } %> 
+                
+          </ul>
+
+
+          <ul class="navbar-nav auth">
+            <% if (user) { %>
+                <li class="text-secondary d-flex justify-content-center align-items-center me-2" >Welcome, <%= user.username %></li>
+                <li class="nav-item logout"><a class="btn btn-danger ms-2" href="/logout">Log out</a></li>
+                <% } else { %>
+                <li class="nav-item"><a class="btn btn-primary me-2" href="/login">Log in</a></li>
+                <li class="nav-item"><a class="btn btn-primary" href="/signup" class="btn">Sign up</a></li>
+
+                <% } %>
+
+        </ul>
+        </div>
+    </div>
+    </nav>
+
+<script type="text/javascript">
+const currentLocation = location.href;
+const menuItems = document.querySelectorAll('a')
+const menuLength = menuItems.length
+for ( i = 0 ; i < menuLength; i++){
+    if (menuItems[i].href === currentLocation){
+      menuItems[i].parentElement.className = 'active';
+    }
+} 
+ 
+</script>

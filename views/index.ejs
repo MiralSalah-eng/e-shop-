@@ -1,0 +1,119 @@
+<%- include('parts/header') %>
+<%- include('parts/navbar') %>
+
+
+<div class="banner">
+  <h2>Welecome To <span>E-Store</span></h2>
+  <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text</p>
+  <input class="btn btn-danger" type="button"  value="Start Shopping" 
+  onClick="document.getElementById('middle').scrollIntoView()" />
+</div>
+<div class="container" id="middle">
+    <form class="d-flex justify-content-center mb-4" action='/' method='GET'>
+        <select style="width: 200px;"  name="category" class="form-select" aria-label="Default select example">
+            <option value="all" selected>All</option>
+            <option value="men">Men Shoes</option>
+            <option value="women">Women Shoes</option>
+            <option value="running">Running Shoes</option>
+          </select>
+          <input type="submit" value="Filter" class=" btn btn-light ms-5">
+    </form>
+ 
+    <% if (products.length ===0 ) {%>
+      <div class="alert alert-danger">
+        There Is No Added Products 
+      </div>
+      <%} else {%>
+        <div class="row">
+          
+          
+          <% for (let [index, product] of products.entries()) {%>
+              <div class="product col col-12 col-md-6 col-lg-3">
+              <div class="card  mb-3">
+                  <img src="<%= product.image%>" class="card-img-top" alt="...">
+                  <div class="card-body">
+                    <h5 class="fw-bold fs-6">
+                      <a style="text-decoration: none;" href="product/<%= product._id%>"><%= product.title %></a>
+                      <p style="font-size: 13px;" class="mt-2 text-black-50">The design provides incredible flexibility<p>
+                      <p class="card-text"> Price: <%= product.price %> $</p>
+                    </h5>
+                    <form data-index="<%=index%> " class="myForm" action="/cart" method="POST">
+                      <input type="hidden" name="name" value="<%=product.title%>"/>
+                      <input type="hidden" name="price" value="<%=product.price%>"/>
+                      <input type="hidden" name="productId" value="<%=product._id%>"/>
+                      <% if(user) {  %> 
+                      <input type="hidden" name="userId" value="<%=user.id%>"/>
+                      <input type="hidden" name="email" value="<%=user.email%>"/>
+                      <% } %> 
+                      <input type="hidden" name="redirectTo" value="/"/>
+                      <input type="number" name="amount" class="form-control mb-2">
+                      <p class="error" class="error"></p>
+                      <div class="d-flex">
+                        <input type="submit" value="Add to Cart" class=" btn btn-light">
+                    </form>
+                    <% if (user) {%> 
+                      <% if(user.isAdmin) {%>
+                        <form class="text-center" method="POST">
+                          <input type="hidden" name="productId" value="<%=product._id%>"/>
+                          <input style=" padding: 6px 0 6px 5px; " formaction="/remove" type="submit" value="Delete Product" class="btn text-danger"/>
+                    </form>
+                        <% } %>  
+                <% } %> 
+
+                  </div>
+                  </div>
+                </div>
+          </div>
+          <%}%>
+      </div>
+ 
+      <ul class="pagination  d-flex justify-content-center mt-4 mb-4">
+          <% for(i=0; i<products.length ; i++ ){ %> 
+          <li class="page-item"><a class="page-link" href="/?p=<%=i%> "><%= i+1 %> </a></li>
+          <% } %> 
+        </ul>
+  </div>
+      <%}%>
+        
+      
+<%- include('parts/footer') %>
+<script>
+  let errorContent = document.getElementsByClassName('error')
+
+  const forms = document.getElementsByClassName('myForm');
+
+for (const form of forms) {
+  form.addEventListener('submit',  async function(evt){
+    evt.preventDefault();
+    let index = Number( form.getAttribute("data-index"))
+    errorContent[index].textContent =" ";
+    
+    const name = form.name.value;
+    const price = form.price.value;
+    const amount = form.amount.value;
+    const userId = form.userId.value;
+    const productId = form.productId.value;
+    try {
+    const response = await fetch('/cart',{ 
+        method: 'POST', 
+        body: JSON.stringify({name,price,amount,userId,productId}),
+        headers: {'Content-Type': 'application/json'}
+      })
+      const data = await response.json();
+      if (data.errors) 
+      {
+        errorContent[index].textContent = data.errors.amount
+      }
+      if (!data.errors) 
+      {
+        
+        location.assign('/cart');
+      }
+    
+  } catch (error) {
+  }
+  
+
+})
+}
+</script>

@@ -1,0 +1,59 @@
+<%- include('parts/header') %>
+<%- include('parts/navbar') %>
+
+<div class="container mt-5" style="
+white-space: nowrap;">
+  
+  <% if (order.length === 0) {%>
+    <p class="alert alert-danger">There is no Items In Order</p>
+  <% }else { %>  
+  
+    <div class="table-responsive-sm">
+
+        <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">no</th>
+            <th scope="col">Product Name</th>
+            <th scope="col">Product Price</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Total</th>
+            <th scope="col">Date</th>
+            <th scope="col">Address</th>
+            <th scope="col">Status</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for ( let i=0; i < order.length ; i++) { %> 
+          <tr>
+            <th scope="row"><%= i+1 %></th>
+            <td><%= order[i].name %></td>
+            <td><%= order[i].price %></td>
+            <td> <%= order[i].amount %></td>
+            <td><%=  order[i].price * order[i].amount %></td>
+            <td> <%= order[i].createdAt.toLocaleDateString() +' '+ order[i].createdAt.toLocaleTimeString() %></td>
+            <td> <%= order[i].address %></td>
+            <td class="text-danger">  <%= order[i].status %></td>
+            <td>
+              <form method="POST">
+                <input type="hidden" name="orderId" value="<%=order[i]._id%>">
+                <input type="hidden" name="productId" value="<%=order[i].productId%>">
+                <input type="hidden" name="userId" value="<%=user._id%>">
+                <input type="submit" class="btn btn-light" value="Cancel Order" formaction="/orders/cancel">
+                <input type="submit" class="btn btn-light" value="Address" formaction="/address/add">
+              </form>
+            </td>
+            </tr>
+            </tbody>
+            </table>
+            </div>
+          <% } %> 
+      <% } %> 
+      <form method="POST">
+        <input type="submit" class="btn btn-danger float-end" value="Delete all" formaction="/orders/deleteall">
+      </form>
+</div>
+
+
+<%- include('parts/footer') %>

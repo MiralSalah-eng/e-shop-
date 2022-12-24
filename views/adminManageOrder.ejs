@@ -1,0 +1,66 @@
+<%- include('parts/header') %>
+<%- include('parts/navbar') %>
+
+<div class="container mt-5">
+   
+  <div class="d-flex row flex-lg-row align-items-center mb-4">
+    <h1 style="flex-basis: 800px;" class="mb-4" >Manage Orders Panel</h1>
+
+    <div style="flex-basis:500px;"  class="input-group rounded">
+
+      <form method="POST" action="/admin/orders/searchEmail" class="d-flex gap-5">
+        <input type="text" name="search" class="form-control rounded" placeholder="Search" 
+      aria-label="Search" aria-describedby="search-addon" />
+      <input type="submit" class = "btn btn-light" value="Search"/>
+      </form>
+
+    </div>    
+  </div>
+    
+  <div class="table-responsive-sm">
+
+        <table style="font-size: 14px;" class="table">
+            <thead>
+              <tr>
+                <th scope="col">Product Name</th>
+                <th scope="col">Product Price</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Total</th>
+                <th scope="col">Date</th>
+                <th scope="col">Email</th>
+                <th scope="col">Address</th>
+                <th scope="col">Status</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+             <% for(order of orders) {%>
+               
+              <tr>
+                <td><%= order.name %></td>
+                <td><%= order.price %></td>
+                <td> <%= order.amount %></td>
+                <td><%=  order.price * order.amount %></td>
+                <td> <%= order.createdAt.toLocaleDateString() +' '+ order.createdAt.toLocaleTimeString() %></td>
+                <td> <%= order.email %></td>
+                <td> <%= order.address %></td>
+                <td class="text-danger">  <%= order.status %></td>
+                <td>
+                  <form method="POST">
+                    <input type="hidden" name="orderId" value="<%= order._id%>">
+                    <input type="submit" formaction="/admin/orders/satuts" class="btn btn-light" value="Shipped">
+                    <input type="submit"  formaction="/admin/orders/delete" class="btn btn-light" value="Delete">
+
+                  </form>
+                </td>
+                </tr>
+                </tbody>
+                
+              <% } %> 
+    </div>
+    </div>
+  </table>
+</div>
+</div>
+
+<%- include('parts/footer') %>
